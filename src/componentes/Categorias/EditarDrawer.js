@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Drawer, Button, Input, Form, Select, Upload, message, Spin, Popconfirm } from "antd";
-import { UploadOutlined, DeleteOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
-import apiURL from "../../UrlBackend";
+import { Drawer, Button, Input, Form, message, Spin, Popconfirm, Typography } from "antd";
+import { DeleteOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import { editarCategoriaId, getCategoriaId, eliminarcategoriaId } from "../../servicios/blogServicios";
 
-const { TextArea } = Input;
-const { Option } = Select;
+const { Text } = Typography;
 
 const EditarDrawer = ({ 
   categoriaId, 
@@ -18,119 +16,156 @@ const EditarDrawer = ({
   const [deleting, setDeleting] = useState(false);
   const [categoriaData, setCategoriaData] = useState(null);
 
-  
-
-  // Obtener datos de la entrada
+  // Obtener datos de la categoría
   useEffect(() => {
-
-    const datosEntrada = async () => {
+    const fetchCategoriaData = async () => {
+      if (!categoriaId?.id) return;
+      
       setLoading(true);
       try {
-        const entradaRes = await getCategoriaId(categoriaId.id);
-        setCategoriaData(entradaRes);
+        const response = await getCategoriaId(categoriaId.id);
+        setCategoriaData(response);
         
         formulario.setFieldsValue({
-          nombre: entradaRes.nombre,
+          nombre: response.nombre,
         });
-
       } catch (error) {
-        message.error('Error al cargar los datos de la entrada');
-        // onClose();
+        message.error('Error al cargar los datos de la categoría');
+        console.error("Error fetching category data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    datosEntrada();
-  }, [categoriaId, formulario,]);
+    if (open) {
+      fetchCategoriaData();
+    }
+  }, [categoriaId, open, formulario]);
 
-  const guardarCategoria = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+    e?.preventDefault();
     try {
       const values = await formulario.validateFields();
       setLoading(true);
 
       const formData = new FormData();
-
       formData.append('nombre', values.nombre);
 
       await editarCategoriaId(categoriaId.id, formData);
 
-      message.success('Entrada actualizada correctamente');
-      formulario.resetFields();
+      message.success('Categoría actualizada correctamente');
       onClose();
       await listaCategorias();
     } catch (error) {
-      if (error.response?.status === 400) {
-        message.error('Error en los datos: ' + JSON.stringify(error.response.data));
+      console.error("Update error:", error);
+      if (error.response?.data) {
+        message.error(`Error: ${error.response.data.message || 'Datos inválidos'}`);
       } else {
-        message.error('Error al actualizar la entrada');
+        message.error('Error al actualizar la categoría');
       }
     } finally {
       setLoading(false);
     }
   };
 
-
-  const eliminarCategoria = async () => {
-
+  const handleDelete = async () => {
     try {
-        await eliminarcategoriaId(categoriaId.id);
-        message.success('Categoria eliminada correctamente');
-        onClose();
-        await listaCategorias();
+      setDeleting(true);
+      await eliminarcategoriaId(categoriaId.id);
+      message.success('Categoría eliminada correctamente');
+      onClose();
+      await listaCategorias();
     } catch (error) {
-      console.log(error);
+      console.error("Delete error:", error);
+      message.error(error.response?.data?.message || 'Error al eliminar la categoría');
+    } finally {
+      setDeleting(false);
     }
-
-  }
-
-  
+  };
 
   return (
     <Drawer
-      title="Editar Entrada"
-      width={530}
+      title={
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Text strong style={{ fontSize: 18 }}>
+            {categoriaData ? `Editar "${categoriaData.nombre}"` : 'Editar Categoría'}
+          </Text>
+        </div>
+      }
+      width={520}
       onClose={onClose}
       open={open}
+      destroyOnClose
       footer={
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
           <Popconfirm
-            title="¿Estás seguro de eliminar esta entrada?"
-            onConfirm={eliminarCategoria}
-            okText="Sí"
-            cancelText="No"
-            okButtonProps={{ loading: deleting }}
+            title="¿Eliminar esta categoría?"
+            description="Esta acción no se puede deshacer. ¿Estás seguro?"
+            onConfirm={handleDelete}
+            okText="Eliminar"
+            cancelText="Cancelar"
+            okButtonProps={{ 
+              danger: true,
+              loading: deleting,
+              icon: <DeleteOutlined />
+            }}
           >
-            <Button danger icon={<DeleteOutlined />} loading={deleting}>
-              Eliminar
+            <Button 
+              danger 
+              type="text" 
+              loading={deleting}
+              disabled={!categoriaData}
+            >
+              Eliminar categoría
             </Button>
           </Popconfirm>
           
           <div>
-            <Button onClick={onClose} icon={<CloseOutlined />} style={{ marginRight: 8 }}>
+            <Button 
+              onClick={onClose} 
+              style={{ marginRight: 12 }}
+              disabled={loading}
+            >
               Cancelar
             </Button>
             <Button 
               type="primary" 
-              onClick={guardarCategoria}
+              onClick={handleSubmit}
               icon={<SaveOutlined />}
               loading={loading}
+              disabled={!categoriaData}
             >
-              Guardar Cambios
+              Guardar cambios
             </Button>
           </div>
         </div>
       }
+      bodyStyle={{ padding: '24px 24px 80px' }}
     >
       <Spin spinning={loading && !categoriaData}>
-        <Form form={formulario} layout="vertical">
+        <Form 
+          form={formulario} 
+          layout="vertical"
+          onFinish={handleSubmit}
+          disabled={loading || deleting}
+        >
           <Form.Item 
-            label="Nombre"  
+            label={<Text strong>Nombre de la categoría</Text>}
             name="nombre"
-            rules={[{ required: true, message: 'Por favor ingrese el nombre' }]}
+            rules={[
+              { required: true, message: 'El nombre es requerido' },
+              { min: 3, message: 'Mínimo 3 caracteres' },
+              { max: 50, message: 'Máximo 50 caracteres' }
+            ]}
           >
-            <Input />
+            <Input 
+              placeholder="Ej: Tecnología, Cocina, Viajes..."
+              allowClear
+            />
           </Form.Item>
         </Form>
       </Spin>
