@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { loginUser } from "../../servicios/cuentaServicios";
+import NavBar from "../Index/NavBar";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -73,127 +74,130 @@ const Login = () => {
   };
 
   return (
-    <Container 
-      component="main" 
-      maxWidth="xs"
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}
-    >
-      <Paper
-        elevation={3}
+    <>
+      <NavBar />
+      <Container 
+        component="main" 
+        maxWidth="xs"
         sx={{
-          p: 4,
-          width: '100%',
+          minHeight: '100vh',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
-          borderRadius: 2
+          justifyContent: 'center'
         }}
       >
-        <Typography 
-          component="h1" 
-          variant="h4"
-          sx={{ 
-            mb: 3,
-            fontWeight: 'bold',
-            color: 'primary.main'
+        <Paper
+          elevation={3}
+          sx={{
+            p: 4,
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            borderRadius: 2
           }}
         >
-          Iniciar Sesión
-        </Typography>
-
-        <Box 
-          component="form" 
-          onSubmit={handleSubmit}
-          sx={{ width: '100%' }}
-        >
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="username"
-            label="Nombre de usuario"
-            name="username"
-            autoComplete="username"
-            autoFocus
-            onChange={handleChange}
-            value={formData.username}
-            sx={{ mb: 2 }}
-          />
-
-          <TextField
-            type={showPassword ? 'text' : 'password'}
-            margin="normal"
-            required
-            fullWidth
-            id="password"
-            label="Contraseña"
-            name="password"
-            autoComplete="current-password"
-            onChange={handleChange}
-            value={formData.password}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={togglePasswordVisibility}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
-            sx={{ mb: 2 }}
-          />
-
-          {error && (
-            <Alert 
-              severity="error" 
-              sx={{ mb: 2 }}
-              onClose={() => setError('')}
-            >
-              {error}
-            </Alert>
-          )}
-
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            disabled={loading}
-            sx={{
-              mt: 2,
-              mb: 2,
-              py: 1.5,
-              fontSize: '1rem'
+          <Typography 
+            component="h1" 
+            variant="h4"
+            sx={{ 
+              mb: 3,
+              fontWeight: 'bold',
+              color: 'primary.main'
             }}
           >
-            {loading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              'Ingresar'
-            )}
-          </Button>
+            Iniciar Sesión
+          </Typography>
 
-          <Box sx={{ textAlign: 'center', mt: 2 }}>
-            <Link 
-              href="#" 
-              variant="body2"
-              onClick={() => navigate('/recuperar-contrasena')}
-              sx={{ textDecoration: 'none' }}
+          <Box 
+            component="form" 
+            onSubmit={handleSubmit}
+            sx={{ width: '100%' }}
+          >
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Nombre de usuario"
+              name="username"
+              autoComplete="username"
+              autoFocus
+              onChange={handleChange}
+              value={formData.username}
+              sx={{ mb: 2 }}
+            />
+
+            <TextField
+              type={showPassword ? 'text' : 'password'}
+              margin="normal"
+              required
+              fullWidth
+              id="password"
+              label="Contraseña"
+              name="password"
+              autoComplete="current-password"
+              onChange={handleChange}
+              value={formData.password}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={togglePasswordVisibility}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+              sx={{ mb: 2 }}
+            />
+
+            {error && (
+              <Alert 
+                severity="error" 
+                sx={{ mb: 2 }}
+                onClose={() => setError('')}
+              >
+                {error}
+              </Alert>
+            )}
+
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              disabled={loading}
+              sx={{
+                mt: 2,
+                mb: 2,
+                py: 1.5,
+                fontSize: '1rem'
+              }}
             >
-              ¿Olvidaste tu contraseña?
-            </Link>
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                'Ingresar'
+              )}
+            </Button>
+
+            <Box sx={{ textAlign: 'center', mt: 2 }}>
+              <Link 
+                href="#" 
+                variant="body2"
+                onClick={() => navigate('/recuperar-contrasena')}
+                sx={{ textDecoration: 'none' }}
+              >
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </Box>
           </Box>
-        </Box>
-      </Paper>
-    </Container>
+        </Paper>
+      </Container>
+      </>
   );
 };
 

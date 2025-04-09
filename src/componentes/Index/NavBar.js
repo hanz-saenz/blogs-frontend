@@ -200,6 +200,22 @@ const NavBar = () => {
               </Menu>
             </>
           ) : (
+            <>
+            <Button
+              component={Link}
+              to="/registrarse"
+              variant="contained"
+              startIcon={<Login />}
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                color: theme.palette.primary.contrastText,
+                '&:hover': {
+                  backgroundColor: theme.palette.primary.dark
+                }
+              }}
+            >
+              Registrarse
+            </Button>
             <Button
               component={Link}
               to="/login"
@@ -215,6 +231,7 @@ const NavBar = () => {
             >
               Iniciar Sesión
             </Button>
+            </>
           )}
         </Box>
       </Toolbar>

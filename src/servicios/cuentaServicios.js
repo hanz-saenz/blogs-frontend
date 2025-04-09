@@ -32,3 +32,26 @@ export const getAutores = async () => {
     console.log(response.data);
     return response.data;
 };
+
+
+export const registrarUsuario = async (datos) => {
+    const respuesta = await axios.post(`${apiURL}/cuenta/registro/`, {
+        datos,
+      });
+
+    console.log('respuesta.data');
+    return respuesta.data;
+}
+
+export const obtenerPerfil = async () => {
+    const response = await axios.get(`${apiURL}/cuenta/perfil/`, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        mode: 'no-cors',
+    });
+    console.log(response.data);
+    return response.data;
+};
+
+
