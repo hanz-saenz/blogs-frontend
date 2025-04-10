@@ -1,5 +1,5 @@
 
-# Django Project
+# React Project
 
 Este proyecto es una aplicación web creada con react como frontend para el manejo de blogs.
 
