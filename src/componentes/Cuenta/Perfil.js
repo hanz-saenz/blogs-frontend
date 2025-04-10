@@ -88,6 +88,8 @@ const Perfil = () => {
       console.log(error);
       setError("No se pudo actualizar el perfil");
     }
+
+    
   };
 
   useEffect(() => {
@@ -109,7 +111,7 @@ const Perfil = () => {
         </Typography>
 
         {perfil.avatar
-          ? <Avatar src={URL.createObjectURL(`${apiURL}${perfil.avatar}`)} sx={{ width: 100, height: 100 }} />
+          ? <Avatar src={URL.createObjectURL(perfil.avatar)} sx={{ width: 100, height: 100 }} />
           : perfil.avatar_url
             ? <Avatar src={`${apiURL}${perfil.avatar_url}`} sx={{ width: 100, height: 100 }} />
             : null
